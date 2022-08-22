@@ -2,11 +2,16 @@ package main
 
 import (
 	"fmt"
-
-	"example.com/go-demo-1/mascot"
+	"os"
 )
 
 func main() {
-	fmt.Println(mascot.BestMascot())
+	
+	name := os.Args[1]
 
+	msg := `hi ` + name + `!
+how are you?`
+
+	fmt.Println(msg)
 }
+
