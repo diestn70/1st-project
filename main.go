@@ -2,69 +2,62 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
+	"time"
 )
 
-// ---------------------------------------------------------
-// STORY
-//
-//  Your boss wants you to create a program that will check
-//  whether a person can watch a particular movie or not.
-//
-//  Imagine that another program provides the age to your
-//  program. Depending on what you return, the other program
-//  will issue the tickets to the person automatically.
-//
-// EXERCISE: Movie Ratings
-//
-//  1. Get the age from the command-line.
-//
-//  2. Return one of the following messages if the age is:
-//     -> Above 17         : "R-Rated"
-//     -> Between 13 and 17: "PG-13"
-//     -> Below 13         : "PG-Rated"
-//
-// RESTRICTIONS:
-//  1. If age data is wrong or absent let the user know.
-//  2. Do not accept negative age.
-//
-// BONUS:
-//  1. BONUS: Use if statements only twice throughout your program.
-//  2. BONUS: Use an if statement only once.
-//
-// EXPECTED OUTPUT
-//  go run main.go 18
-//    R-Rated
-//
-//  go run main.go 17
-//    PG-13
-//
-//  go run main.go 12
-//    PG-Rated
-//
-//  go run main.go
-//    Requires age
-//
-//  go run main.go -5
-//    Wrong age: "-5"
-// ---------------------------------------------------------
+const (
+	maxTurns = 5
+	usage    = `Welcome to the Lucky Number game!
+
+The program will pick %d random numbers.
+Your mission is to guess one of those numbers
+
+The greater you number is, the harder it gets.
+
+Wanna play?`
+)
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("Requires age")
-		return
-	}
-	age, err := strconv.Atoi(os.Args[1])
+	rand.Seed(time.Now().UnixNano())
 
-	if err != nil || age < 0 {
-		fmt.Printf(`Wrong age: %q`+"\n", os.Args[1])
+	args := os.Args[1:]
+
+	if len(args) < 1 {
+		fmt.Printf(usage, maxTurns)
 		return
-	} else if age > 17 {
-		fmt.Println("R-Rated")
-	} else if age >= 13 && age <= 17 {
-		fmt.Println("PG-13")
-	} else if age < 13 {
-		fmt.Println("PG-Rated")
 	}
+
+	guess, err := strconv.Atoi(args[0])
+	if err != nil {
+		fmt.Println("Not a number.")
+		return
+	}
+
+	if guess <= 0 {
+		fmt.Println("Please pick a positive number.")
+		return
+	}
+
+	min := 10
+	if guess > min {
+		min = guess
+	}
+
+	for turn := 0; turn < maxTurns; turn++ {
+		n := rand.Intn(guess) + 1
+
+		if n == guess {
+			if turn == 1 {
+				fmt.Println("First Guess Winner!")
+			} else {
+				fmt.Println("You Won!")
+			}
+			return
+		}
+	}
+	fmt.Println("You Lost...Try again?")
+
 }
